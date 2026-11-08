@@ -31,26 +31,6 @@ Feature 7 intentionally depends on pre-existing team and membership records. The
    npm run build
    ```
 
-3. Generate an application key:
-
-   ```sh
-   php artisan key:generate
-   ```
-
-4. Create the clean Feature 7 schema and sample accounts:
-
-   ```sh
-   php artisan migrate:fresh --seed
-   ```
-
-   `migrate:fresh` drops all tables in the configured database. Use only a new or disposable database.
-
-5. Start Laravel:
-
-   ```sh
-   php artisan serve
-   ```
-
 ### Seed accounts
 
 All seed accounts use the password `password123`:
