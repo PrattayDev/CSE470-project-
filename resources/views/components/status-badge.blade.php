@@ -2,14 +2,8 @@
 @php
     $normalized = strtolower(trim((string) $status));
     $styles = match ($normalized) {
-        'approved', 'completed', 'resolved', 'returned', 'reviewed', 'verified', 'locked', 'supervised', 'cleared', 'excellent'
-            => ['bg' => 'bg-emerald-100 text-emerald-800 border-emerald-200', 'icon' => 'fa-circle-check'],
-        'pending', 'in_progress', 'requested', 'under_review', 'submitted', 'forming', 'good', 'carried_over', 'rescheduled'
-            => ['bg' => 'bg-amber-100 text-amber-800 border-amber-200', 'icon' => 'fa-clock'],
-        'available', 'booked', 'scheduled', 'planned', 'todo'
+        'available', 'booked'
             => ['bg' => 'bg-indigo-100 text-indigo-800 border-indigo-200', 'icon' => 'fa-calendar-check'],
-        'rejected', 'declined', 'overdue', 'needs_update', 'revision_required', 'damaged', 'maintenance', 'cancelled'
-            => ['bg' => 'bg-rose-100 text-rose-800 border-rose-200', 'icon' => 'fa-triangle-exclamation'],
         default
             => ['bg' => 'bg-slate-100 text-slate-700 border-slate-200', 'icon' => 'fa-circle-info'],
     };

@@ -20,9 +20,4 @@ class ConsultationSlot extends Model
     {
         return $this->belongsTo(Team::class, 'booked_by_team_id');
     }
-
-    public function minutes()
-    {
-        return $this->hasMany(MeetingMinute::class, 'slot_id');
-    }
 }

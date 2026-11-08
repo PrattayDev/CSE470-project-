@@ -16,7 +16,7 @@ class RoleMiddleware
 
         $userRole = Auth::user()->role;
         if (!empty($roles) && !in_array($userRole, $roles)) {
-            return redirect()->route('dashboard')
+            return redirect()->route('consultations.index')
                 ->with('error', 'Access denied: Your role (' . strtoupper($userRole) . ') is not authorized for this action.');
         }
 

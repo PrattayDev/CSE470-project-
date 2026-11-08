@@ -1,32 +1,72 @@
-# UniNexus — Smart University Thesis, Project & Lab Resource Management System
-**Course:** CSE 470 (Software Engineering) | **Section:** 09 | **Group:** Group 3
-**Architecture:** Strict Model-View-Controller (MVC) using **Laravel 10 (PHP) + Blade + MySQL**
+# UniNexus — Feature 7
 
-## 👥 Group 3 Members & Final Assigned 5-Feature Modules (Section 09)
-1. **Prattay Dev Burman** (ID: `23101048`) — *Module 1 (Features F1, F2, F3, F4, F20):*
-   - F1: Multi-Role Academic Profile & Skill Matrix (`ProfileSkillController`)
-   - F2: Smart Team Formation & Teammate Finder (`TeamFormationController`)
-   - F3: Supervisor Quota & Topic Proposal Bidding (`ProposalBiddingController`)
-   - F4: Duplicate Topic & Title Similarity Checker (`TopicSimilarityService`)
-   - F20: Coordinator Analytics & Cohort Performance Dashboard (`AnalyticsController`)
+UniNexus is a Laravel 10 MVC application scoped to **Feature 7: Consultation Slot Booking & Meeting Scheduler**.
 
-2. **Rownak Jahan** (ID: `23101159`) — *Module 2 (Features F9, F15, F16, F17, F18):*
-   - F9: Document Version Control & SRS/Report Submission Portal (`DocumentVersionController`)
-   - F15: Automated Notification & Deadline Reminder System (`NotificationController`)
-   - F16: Project Showcase & Digital Archive Repository (`ArchiveController`)
-   - F17: Plagiarism & AI-Disclosure Compliance Tracker (`ComplianceController`)
-   - F18: Group Dispute & Scope Change Request Module (`ScopeDisputeController`)
+## Feature 7
 
-3. **Samara Shahjeen Huq** (ID: `23301214`) — *Module 3 (Features F7, F8, F10, F11, F14):*
-   - F7: Consultation Slot Booking & Meeting Scheduler (`ConsultationController`)
-   - F8: Meeting Minutes & Action Item Tracker (`ConsultationController`)
-   - F10: Rubric-Based Evaluation & Individual Viva Grading System (`EvaluationController`, `GradingCalculationService`)
-   - F11: Peer Evaluation & Contribution Weightage Calculator (`EvaluationController`, `GradingCalculationService`)
-   - F14: Defense/Viva Room & Panel Scheduling Engine (`DefenseScheduleController`)
+- Supervisors publish consultation slots; coordinators can publish slots for a supervisor.
+- The app rejects overlapping slots for the same supervisor or room/meeting link.
+- Students can book an available slot for a team they belong to. A team cannot book an occupied slot or hold multiple upcoming slots with the same supervisor.
+- Students can cancel their own team's booking; supervisors can cancel bookings on their own slots; coordinators can cancel any booking.
+- Users must sign in, and role middleware restricts slot publishing and booking actions.
 
-4. **Md. Siddique Bishwas** (ID: `22301762`) — *Module 4 (Features F5, F6, F12, F13, F19):*
-   - F5: Milestone & Weekly Sprint Planning Module (`SprintController`)
-   - F6: Sprint Attainment & Progress Review Workflow (`SprintController`)
-   - F12: Hardware & Lab Equipment Inventory Management (`LabInventoryController`)
-   - F13: Lab Resource Requisition & Return Penalty Workflow (`LabInventoryController`, `PenaltyCalculationService`)
-   - F19: Automated Certificate & Clearance Sheet Generator (`ClearanceController`, `PenaltyCalculationService`)
+## Shared infrastructure retained
+
+Authentication and the shared Blade layout are retained. The minimum feature data model is:
+
+- `users`: login identity and role
+- `teams`: team name displayed with a booking
+- `team_members`: verifies which teams a student may book for
+- `consultation_slots`: published slots, bookings, and agenda
+
+Feature 7 intentionally depends on pre-existing team and membership records. The seed data creates one sample student, supervisor, coordinator, team, and membership so the feature can be exercised immediately. Team-formation functionality is not included.
+
+## Local setup
+
+1. Install PHP dependencies with `composer install` and configure `.env` for a disposable MySQL database.
+2. Install the stylesheet build dependency and regenerate the CSS when needed:
+
+   ```sh
+   npm install
+   npm run build
+   ```
+
+3. Generate an application key:
+
+   ```sh
+   php artisan key:generate
+   ```
+
+4. Create the clean Feature 7 schema and sample accounts:
+
+   ```sh
+   php artisan migrate:fresh --seed
+   ```
+
+   `migrate:fresh` drops all tables in the configured database. Use only a new or disposable database.
+
+5. Start Laravel:
+
+   ```sh
+   php artisan serve
+   ```
+
+### Seed accounts
+
+All seed accounts use the password `password123`:
+
+| Role | Email |
+|---|---|
+| Student | `student.f7@uninexus.test` |
+| Supervisor | `supervisor.f7@uninexus.test` |
+| Coordinator | `coordinator.f7@uninexus.test` |
+
+The sample student is a member of the seeded sample team. Seeding is safe to rerun: it creates missing accounts/team membership and resets the demo-account passwords to `password123`.
+
+## Verification
+
+The automated Feature 7 tests use an in-memory SQLite database:
+
+```sh
+php artisan test
+```
