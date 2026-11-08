@@ -40,4 +40,9 @@ class Team extends Model
     {
         return $this->hasMany(DocumentSubmission::class, 'team_id');
     }
+
+    public function sprints()
+    {
+        return $this->hasMany(Sprint::class, 'team_id');
+    }
 }

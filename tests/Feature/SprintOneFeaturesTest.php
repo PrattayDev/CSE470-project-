@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\DocumentSubmission;
+use App\Models\Sprint;
+use App\Models\SprintTask;
 use App\Models\Team;
 use App\Models\TeamMember;
 use App\Models\User;
@@ -138,5 +140,56 @@ class SprintOneFeaturesTest extends TestCase
         if (is_file($fullPath)) {
             @unlink($fullPath);
         }
+    }
+
+    public function test_f5_student_can_create_sprint_and_assign_tasks_with_git_commit(): void
+    {
+        $student = User::where('role', 'student')->firstOrFail();
+        $team = Team::whereHas('members', fn ($q) => $q->where('student_id', $student->id))->firstOrFail();
+
+        // 1. Invalid sprint number (> 4) is rejected
+        $this->actingAs($student)
+            ->post('/sprints', [
+                'team_id' => $team->id,
+                'sprint_number' => 5,
+                'sprint_goal' => 'Invalid sprint boundary test',
+                'start_date' => '2026-11-10',
+                'end_date' => '2026-11-16',
+            ])
+            ->assertSessionHasErrors('sprint_number');
+
+        // 2. Valid sprint planning initialized (Sprint 2)
+        $this->actingAs($student)
+            ->post('/sprints', [
+                'team_id' => $team->id,
+                'sprint_number' => 2,
+                'sprint_goal' => 'Implement Feature 5 Sprint Planning with MVC validation',
+                'start_date' => '2026-11-10',
+                'end_date' => '2026-11-16',
+            ])
+            ->assertSessionHas('success');
+
+        $sprint = Sprint::where('team_id', $team->id)->where('sprint_number', 2)->firstOrFail();
+        $this->assertEquals(2, $sprint->sprint_number);
+
+        // 3. Assign task with git commit tracking
+        $this->actingAs($student)
+            ->post('/sprints/tasks', [
+                'sprint_id' => $sprint->id,
+                'assigned_to' => $student->id,
+                'feature_number' => 5,
+                'feature_title' => 'Milestone & Weekly Sprint Planning Module',
+                'task_description' => 'Build SprintController, Sprint and SprintTask models, Blade views',
+                'git_commit_hash' => 'a1b2c3d',
+                'status' => 'in_progress',
+            ])
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('sprint_tasks', [
+            'sprint_id' => $sprint->id,
+            'assigned_to' => $student->id,
+            'feature_number' => 5,
+            'git_commit_hash' => 'a1b2c3d',
+        ]);
     }
 }

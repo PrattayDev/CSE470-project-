@@ -87,10 +87,42 @@ return new class extends Migration
             $table->text('faculty_comments')->nullable();
             $table->timestamps();
         });
+
+        // 5. Sprints & Tasks (Feature 5: Milestone & Weekly Sprint Planning Module - Siddique Sprint 1)
+        Schema::create('sprints', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('team_id')->constrained('teams')->cascadeOnDelete();
+            $table->integer('sprint_number');
+            $table->string('sprint_goal', 255);
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->text('attainment_summary')->nullable();
+            $table->text('blockers_reported')->nullable();
+            $table->string('github_pr_or_commit_url', 255)->nullable();
+            $table->string('demo_video_url', 255)->nullable();
+            $table->enum('status', ['planned', 'in_progress', 'submitted', 'reviewed'])->default('planned');
+            $table->text('supervisor_remarks')->nullable();
+            $table->integer('attainment_percentage')->default(0);
+            $table->timestamps();
+        });
+
+        Schema::create('sprint_tasks', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('sprint_id')->constrained('sprints')->cascadeOnDelete();
+            $table->foreignId('assigned_to')->constrained('users')->cascadeOnDelete();
+            $table->integer('feature_number');
+            $table->string('feature_title', 200);
+            $table->text('task_description');
+            $table->string('git_commit_hash', 80)->nullable();
+            $table->enum('status', ['todo', 'in_progress', 'completed', 'carried_over'])->default('todo');
+            $table->timestamps();
+        });
     }
 
     public function down(): void
     {
+        Schema::dropIfExists('sprint_tasks');
+        Schema::dropIfExists('sprints');
         Schema::dropIfExists('document_submissions');
         Schema::dropIfExists('proposals');
         Schema::dropIfExists('team_invitations');

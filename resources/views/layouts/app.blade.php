@@ -67,6 +67,14 @@
                 <span>F9: SRS & Doc Versioning</span>
             </a>
             @endif
+
+            @if(\Illuminate\Support\Facades\Route::has('sprints.index'))
+            <div class="pt-3 pb-1 px-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Siddique (M4) • Sprint 1</div>
+            <a href="{{ route('sprints.index') }}" class="{{ $navClass('sprints.*') }}">
+                <i class="fa-solid fa-list-check w-5 text-amber-400"></i>
+                <span>F5: Sprint Planning Module</span>
+            </a>
+            @endif
         </nav>
 
         <div class="px-4 py-3 border-t border-slate-800 bg-slate-950/60 text-xs text-slate-400">
