@@ -59,13 +59,20 @@
         <h3 class="font-bold mb-3">Version History & Faculty Feedback</h3>
         <div class="space-y-3 text-sm">
             @forelse($documents as $doc)
+            @php
+                $docNext = match($doc->faculty_review_status) {
+                    'pending' => 'Awaiting Faculty Review',
+                    'needs_update' => 'Upload Next Version',
+                    default => null,
+                };
+            @endphp
             <div class="p-4 border rounded-lg">
-                <div class="flex justify-between items-start">
+                <div class="flex flex-wrap justify-between items-start gap-2">
                     <div>
                         <span class="font-bold">{{ $doc->document_type }} ({{ $doc->version_tag }})</span>
                         <div class="text-xs text-slate-500">Team: {{ $doc->team->group_name ?? 'Team' }} • Committed by: {{ $doc->submitter->name ?? 'Student' }}</div>
                     </div>
-                    <span class="uppercase text-xs font-bold px-2 py-0.5 rounded {{ $doc->faculty_review_status === 'approved' ? 'bg-emerald-100 text-emerald-800' : ($doc->faculty_review_status === 'needs_update' ? 'bg-rose-100 text-rose-800' : 'bg-indigo-50 text-indigo-700') }}">{{ $doc->faculty_review_status }}</span>
+                    <x-status-badge :status="$doc->faculty_review_status" :nextAction="$docNext" />
                 </div>
                 <p class="text-xs text-slate-600 mt-1.5"><strong>Changelog:</strong> {{ $doc->changelog_notes }}</p>
                 <a href="{{ route('documents.download', $doc) }}" target="_blank" class="text-xs text-indigo-600 underline inline-block mt-1">Open / Download Protected Document Artifact</a>

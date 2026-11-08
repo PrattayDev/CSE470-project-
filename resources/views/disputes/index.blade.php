@@ -36,10 +36,13 @@
     <div class="bg-white p-5 rounded-xl shadow-sm border">
         <h3 class="font-bold mb-3">Request Log & Coordinator Resolution</h3>
         @forelse($requests as $r)
-            <div class="p-3 border rounded mb-3 text-sm">
-                <div class="flex justify-between items-center">
+            @php
+                $disputeNext = in_array($r->status, ['pending', 'under_review'], true) ? 'Coordinator Decision' : null;
+            @endphp
+            <div class="p-3.5 border rounded-lg mb-3 text-sm">
+                <div class="flex flex-wrap justify-between items-center gap-2">
                     <strong>{{ strtoupper($r->request_type) }} • {{ $r->team->group_name ?? 'Team' }}</strong>
-                    <span class="uppercase text-xs font-bold px-2 py-0.5 rounded bg-slate-100">{{ $r->status }}</span>
+                    <x-status-badge :status="$r->status" :nextAction="$disputeNext" />
                 </div>
                 <p class="text-xs text-slate-500 mt-1">Current: {{ $r->current_scope_detail }} → Proposed: {{ $r->proposed_change_detail }}</p>
                 <p class="text-xs text-slate-600">Justification: {{ $r->reason_justification }}</p>

@@ -26,14 +26,31 @@ class ProposalBiddingController extends Controller
         $user = $request->user();
         abort_unless($user !== null, 401);
 
-        $proposals = Proposal::with(['team', 'supervisor'])->latest('id')->get();
+        $statusFilter = trim((string) $request->query('status', ''));
+        $teamFilter = trim((string) $request->query('team_id', ''));
+        $searchQuery = trim((string) $request->query('q', ''));
+
+        $proposals = Proposal::with(['team', 'supervisor'])
+            ->when($statusFilter !== '', fn ($q) => $q->where('status', $statusFilter))
+            ->when($teamFilter !== '', fn ($q) => $q->where('team_id', (int) $teamFilter))
+            ->when($searchQuery !== '', function ($q) use ($searchQuery) {
+                $q->where(function ($sub) use ($searchQuery) {
+                    $sub->where('title', 'LIKE', "%{$searchQuery}%")
+                        ->orWhere('tech_stack', 'LIKE', "%{$searchQuery}%")
+                        ->orWhere('problem_statement', 'LIKE', "%{$searchQuery}%");
+                });
+            })
+            ->latest('id')
+            ->get();
+
         $supervisors = User::whereIn('role', ['supervisor', 'coordinator'])->get();
+        $allTeams = Team::all();
 
         $teams = $user->role === 'student'
             ? Team::whereHas('members', fn($q) => $q->where('student_id', $user->id))->orWhere('leader_id', $user->id)->get()
-            : Team::all();
+            : $allTeams;
 
-        return view('proposals.index', compact('proposals', 'supervisors', 'teams'));
+        return view('proposals.index', compact('proposals', 'supervisors', 'teams', 'allTeams', 'statusFilter', 'teamFilter', 'searchQuery'));
     }
 
     /**

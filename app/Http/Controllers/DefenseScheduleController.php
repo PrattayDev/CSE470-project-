@@ -13,13 +13,24 @@ use Illuminate\Support\Facades\Auth;
  */
 class DefenseScheduleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $schedules = DefenseSchedule::with(['team', 'panelChair'])->orderBy('defense_date')->orderBy('start_time')->get();
+        $dateFilter = trim((string) $request->query('date', ''));
+        $statusFilter = trim((string) $request->query('status', ''));
+        $roomFilter = trim((string) $request->query('room', ''));
+
+        $schedules = DefenseSchedule::with(['team', 'panelChair'])
+            ->when($dateFilter !== '', fn ($q) => $q->whereDate('defense_date', $dateFilter))
+            ->when($statusFilter !== '', fn ($q) => $q->where('status', $statusFilter))
+            ->when($roomFilter !== '', fn ($q) => $q->where('room_number', 'LIKE', "%{$roomFilter}%"))
+            ->orderBy('defense_date')
+            ->orderBy('start_time')
+            ->get();
+
         $teams = Team::all();
         $supervisors = User::whereIn('role', ['supervisor', 'coordinator'])->get();
 
-        return view('defense.index', compact('schedules', 'teams', 'supervisors'));
+        return view('defense.index', compact('schedules', 'teams', 'supervisors', 'dateFilter', 'statusFilter', 'roomFilter'));
     }
 
     public function store(Request $request)

@@ -40,11 +40,11 @@
 
     <div class="lg:col-span-2 bg-white p-5 rounded-xl shadow-sm border">
         <h3 class="font-bold text-base mb-3">Assign Feature Task & Link Git Commit</h3>
-        <form method="POST" action="{{ route('sprints.tasks.store') }}" class="grid grid-cols-2 gap-3 text-sm">
+        <form method="POST" action="{{ route('sprints.tasks.store') }}" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             @csrf
             <div>
                 <label class="block font-medium mb-1">Target Sprint</label>
-                <select name="sprint_id" class="w-full border rounded px-3 py-1.5">
+                <select name="sprint_id" class="w-full border rounded px-3 py-2 bg-white">
                     @foreach($sprints as $sp)
                         <option value="{{ $sp->id }}">Sprint {{ $sp->sprint_number }} ({{ $sp->sprint_goal }})</option>
                     @endforeach
@@ -52,7 +52,7 @@
             </div>
             <div>
                 <label class="block font-medium mb-1">Assign To Team Member</label>
-                <select name="assigned_to" class="w-full border rounded px-3 py-1.5">
+                <select name="assigned_to" class="w-full border rounded px-3 py-2 bg-white">
                     @foreach($students as $stu)
                         <option value="{{ $stu->id }}">{{ $stu->name }} ({{ $stu->student_or_faculty_id }})</option>
                     @endforeach
@@ -60,30 +60,35 @@
             </div>
             <div>
                 <label class="block font-medium mb-1">Feature # (1-20)</label>
-                <input type="number" name="feature_number" value="6" min="1" max="20" class="w-full border rounded px-3 py-1.5">
+                <input type="number" name="feature_number" value="6" min="1" max="20" class="w-full border rounded px-3 py-2">
+                <x-input-error field="feature_number" />
             </div>
             <div>
                 <label class="block font-medium mb-1">Feature Title</label>
-                <input type="text" name="feature_title" placeholder="Sprint Attainment Review" required class="w-full border rounded px-3 py-1.5">
+                <input type="text" name="feature_title" placeholder="Sprint Attainment Review" required class="w-full border rounded px-3 py-2">
+                <x-input-error field="feature_title" />
             </div>
             <div>
-                <label class="block font-medium mb-1">Git Commit Hash / PR</label>
-                <input type="text" name="git_commit_hash" placeholder="f8d9a2c" class="w-full border rounded px-3 py-1.5">
+                <label class="block font-medium mb-1">Git Commit Hash (7–40 Hex Chars)</label>
+                <input type="text" name="git_commit_hash" placeholder="f8d9a2c" class="w-full border rounded px-3 py-2">
+                <x-input-error field="git_commit_hash" />
             </div>
             <div>
                 <label class="block font-medium mb-1">Task Status</label>
-                <select name="status" class="w-full border rounded px-3 py-1.5">
+                <select name="status" class="w-full border rounded px-3 py-2 bg-white">
                     <option value="completed">Completed</option>
                     <option value="in_progress">In Progress</option>
                     <option value="todo">To Do</option>
                     <option value="carried_over">Carried Over</option>
                 </select>
             </div>
-            <div class="col-span-2">
-                <input type="text" name="task_description" placeholder="Detailed MVC implementation description..." required class="w-full border rounded px-3 py-1.5">
+            <div class="sm:col-span-2">
+                <label class="block font-medium mb-1">Task Implementation Description</label>
+                <input type="text" name="task_description" placeholder="Detailed MVC implementation description..." required class="w-full border rounded px-3 py-2">
+                <x-input-error field="task_description" />
             </div>
-            <div class="col-span-2">
-                <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded font-semibold">Add Task & Recalculate Attainment</button>
+            <div class="sm:col-span-2">
+                <button type="submit" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded font-semibold">Add Task & Recalculate Attainment</button>
             </div>
         </form>
     </div>

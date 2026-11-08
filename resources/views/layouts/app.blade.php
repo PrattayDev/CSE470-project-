@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniNexus — CSE 470 MVC Thesis, Project & Lab Management</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Locally compiled CSS asset bundle (Improvement #6) -->
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row">
@@ -27,8 +28,8 @@
             <span class="bg-indigo-600 text-white px-2 py-1 rounded font-bold text-sm">UN</span>
             <span class="font-bold text-sm">UniNexus MVC</span>
         </div>
-        <button type="button" onclick="document.getElementById('sidebarNav').classList.toggle('hidden')" class="text-slate-200 hover:text-white">
-            <i class="fa-solid fa-bars text-lg"></i>
+        <button type="button" aria-label="Toggle navigation menu" onclick="document.getElementById('sidebarNav').classList.toggle('hidden')" class="text-slate-200 hover:text-white p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
         </button>
     </div>
 
@@ -179,23 +180,24 @@
         </header>
         @endauth
 
-        <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+        <main class="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto" id="mainContent">
             @if(session('success'))
-                <div data-flash-alert class="mb-6 bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 p-4 rounded shadow-sm flex items-center justify-between">
-                    <div><i class="fa-solid fa-circle-check mr-2"></i> {{ session('success') }}</div>
-                    <button type="button" onclick="this.parentElement.remove()" class="text-emerald-700 hover:text-emerald-900 text-xs font-bold ml-4">✕</button>
+                <div data-flash-alert role="status" aria-live="polite" class="mb-6 bg-emerald-50 border-l-4 border-emerald-500 text-emerald-900 p-4 rounded shadow-sm flex items-center justify-between">
+                    <div><i class="fa-solid fa-circle-check mr-2 text-emerald-600" aria-hidden="true"></i> {{ session('success') }}</div>
+                    <button type="button" aria-label="Dismiss success alert" onclick="this.parentElement.remove()" class="text-emerald-700 hover:text-emerald-900 text-xs font-bold ml-4 p-1">✕</button>
                 </div>
             @endif
 
             @if(session('error'))
-                <div data-flash-alert class="mb-6 bg-rose-50 border-l-4 border-rose-500 text-rose-800 p-4 rounded shadow-sm flex items-center justify-between">
-                    <div><i class="fa-solid fa-triangle-exclamation mr-2"></i> {{ session('error') }}</div>
-                    <button type="button" onclick="this.parentElement.remove()" class="text-rose-700 hover:text-rose-900 text-xs font-bold ml-4">✕</button>
+                <div data-flash-alert role="alert" aria-live="assertive" class="mb-6 bg-rose-50 border-l-4 border-rose-500 text-rose-900 p-4 rounded shadow-sm flex items-center justify-between">
+                    <div><i class="fa-solid fa-triangle-exclamation mr-2 text-rose-600" aria-hidden="true"></i> {{ session('error') }}</div>
+                    <button type="button" aria-label="Dismiss error alert" onclick="this.parentElement.remove()" class="text-rose-700 hover:text-rose-900 text-xs font-bold ml-4 p-1">✕</button>
                 </div>
             @endif
 
             @if($errors->any())
-                <div class="mb-6 bg-amber-50 border-l-4 border-amber-500 text-amber-800 p-4 rounded shadow-sm">
+                <div role="alert" aria-live="assertive" class="mb-6 bg-amber-50 border-l-4 border-amber-500 text-amber-900 p-4 rounded shadow-sm">
+                    <div class="font-bold text-xs uppercase tracking-wide mb-1">Please fix the following form errors:</div>
                     <ul class="list-disc pl-5 text-sm">
                         @foreach($errors->all() as $err)
                             <li>{{ $err }}</li>

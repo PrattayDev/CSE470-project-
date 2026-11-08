@@ -4,10 +4,11 @@
     <h2 class="text-2xl font-bold text-slate-800 mb-2">Academic Registration</h2>
     <form method="POST" action="{{ route('register.submit') }}" class="space-y-4">
         @csrf
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium mb-1">Student ID</label>
                 <input type="text" name="student_or_faculty_id" placeholder="23101048" required class="w-full border rounded-lg px-3 py-2">
+                <x-input-error field="student_or_faculty_id" />
             </div>
             <div>
                 <label class="block text-sm font-medium mb-1">Account Role</label>
@@ -17,12 +18,14 @@
         <div>
             <label class="block text-sm font-medium mb-1">Full Name</label>
             <input type="text" name="name" required class="w-full border rounded-lg px-3 py-2">
+            <x-input-error field="name" />
         </div>
         <div>
             <label class="block text-sm font-medium mb-1">University G-Suite Email</label>
             <input type="email" name="email" required class="w-full border rounded-lg px-3 py-2">
+            <x-input-error field="email" />
         </div>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium mb-1">Section</label>
                 <input type="text" name="section" value="09" class="w-full border rounded-lg px-3 py-2">
@@ -36,7 +39,7 @@
             <label class="block text-sm font-medium mb-1">Skills (Comma separated)</label>
             <input type="text" name="skills" value="Laravel, PHP, MySQL, MVC, UML" class="w-full border rounded-lg px-3 py-2">
         </div>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium mb-1">Password</label>
                 <input type="password" name="password" required class="w-full border rounded-lg px-3 py-2">

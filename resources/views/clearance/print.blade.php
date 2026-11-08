@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Clearance Certificate - {{ $certificate->certificate_serial }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
         @media print {
             body { padding: 0 !important; background: #fff !important; }

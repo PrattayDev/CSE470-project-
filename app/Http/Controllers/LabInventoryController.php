@@ -21,13 +21,33 @@ class LabInventoryController extends Controller
     {
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $equipments = LabEquipment::orderBy('category')->get();
-        $requisitions = EquipmentRequisition::with(['team', 'equipment', 'requester'])->latest()->get();
+        $categoryFilter = trim((string) $request->query('category', ''));
+        $conditionFilter = trim((string) $request->query('condition', ''));
+        $reqStatusFilter = trim((string) $request->query('req_status', ''));
+        $searchQuery = trim((string) $request->query('q', ''));
+
+        $equipments = LabEquipment::query()
+            ->when($categoryFilter !== '', fn ($q) => $q->where('category', 'LIKE', "%{$categoryFilter}%"))
+            ->when($conditionFilter !== '', fn ($q) => $q->where('condition_status', $conditionFilter))
+            ->when($searchQuery !== '', function ($q) use ($searchQuery) {
+                $q->where(function ($sub) use ($searchQuery) {
+                    $sub->where('equipment_name', 'LIKE', "%{$searchQuery}%")
+                        ->orWhere('asset_code', 'LIKE', "%{$searchQuery}%");
+                });
+            })
+            ->orderBy('category')
+            ->get();
+
+        $requisitions = EquipmentRequisition::with(['team', 'equipment', 'requester'])
+            ->when($reqStatusFilter !== '', fn ($q) => $q->where('status', $reqStatusFilter))
+            ->latest()
+            ->get();
+
         $teams = Team::all();
 
-        return view('inventory.index', compact('equipments', 'requisitions', 'teams'));
+        return view('inventory.index', compact('equipments', 'requisitions', 'teams', 'categoryFilter', 'conditionFilter', 'reqStatusFilter', 'searchQuery'));
     }
 
     public function storeEquipment(Request $request)

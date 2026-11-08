@@ -18,9 +18,16 @@ use Illuminate\Support\Facades\DB;
  */
 class ConsultationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $statusFilter = trim((string) $request->query('status', ''));
+        $dateFilter = trim((string) $request->query('date', ''));
+        $teamFilter = trim((string) $request->query('team_id', ''));
+
         $slots = ConsultationSlot::with(['supervisor', 'bookedTeam', 'minutes.recorder', 'minutes.assignee'])
+            ->when($statusFilter !== '', fn ($q) => $q->where('status', $statusFilter))
+            ->when($dateFilter !== '', fn ($q) => $q->whereDate('slot_date', $dateFilter))
+            ->when($teamFilter !== '', fn ($q) => $q->where('booked_by_team_id', (int) $teamFilter))
             ->orderBy('slot_date')
             ->orderBy('start_time')
             ->get();
@@ -28,7 +35,7 @@ class ConsultationController extends Controller
         $teams = Team::all();
         $students = User::where('role', 'student')->orderBy('name')->get();
 
-        return view('consultations.index', compact('slots', 'supervisors', 'teams', 'students'));
+        return view('consultations.index', compact('slots', 'supervisors', 'teams', 'students', 'statusFilter', 'dateFilter', 'teamFilter'));
     }
 
     public function storeSlot(Request $request)
